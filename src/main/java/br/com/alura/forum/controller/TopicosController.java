@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -54,26 +55,44 @@ public class TopicosController {
     }
 
     @GetMapping("/{id}")  //id dinamico
-    public DetalhesDoTopicoDTO detalhar(@PathVariable Long id) {
-        Topico topico = topicoRepository.getReferenceById(id);
-        return new DetalhesDoTopicoDTO(topico);
+    public ResponseEntity<DetalhesDoTopicoDTO> detalhar(@PathVariable Long id) {
+        Optional<Topico> topico = topicoRepository.findById(id);
+
+        if (topico.isPresent()) {
+            return ResponseEntity.ok(new DetalhesDoTopicoDTO(topico.get()));
+        }
+
+        return ResponseEntity.notFound().build();
+
     }
 
     @PutMapping("/{id}")
     @Transactional   // dispara o commit no banco de dados
     public ResponseEntity<TopicoDTO> atualizar(@PathVariable Long id,
                                                @RequestBody @Valid AtualizacaoTopicoForm form) {
-        Topico topico = form.atualizar(id, topicoRepository);
-        return ResponseEntity.ok(new TopicoDTO(topico));
+        Optional<Topico> optional = topicoRepository.findById(id);
+
+        if (optional.isPresent()) {
+            Topico topico = form.atualizar(id, topicoRepository);
+            return ResponseEntity.ok(new TopicoDTO(topico));
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<?> remover(@PathVariable Long id) {
-        topicoRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+        Optional<Topico> optional = topicoRepository.findById(id);
+        if (optional.isPresent()) {
+            topicoRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.notFound().build();
+
     }
-    
+
 
 
 }
