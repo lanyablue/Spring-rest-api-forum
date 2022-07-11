@@ -1,0 +1,11 @@
+Bean Validation
+
+Apos adicionada a dependencia de validação, na minha classe TopicoForm coloquei as seguintes anotações em cima dos atributos
+
+@NotNull @NotEmpty @Length(min = 5)
+
+Essas anotações estão dizendo que, cada atributo, ao ser postado, nao pode ser nulo nem vazio, e possui um tamanho minimo requerido
+
+Apos as anotações, no parametro TopicoForm do metodo cadastrar de meu controller foi adicionada a anotação @Valid, do javax 
+validation, isto é, estou avisando que caso alguma de minhas validações não sejam preenchidas, ele nem entre no metodo 
+e dispare um bad request  
