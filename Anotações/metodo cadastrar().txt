@@ -1,0 +1,34 @@
+Para devolver o codigo 201, utilizamos a classe do spring ResponseEntity<> como forma de retorno,  que recebe um generic. 
+E esse generic é qual o tipo de objeto que irei devolver no corpo da resposta, que no caso é um topico pois acabou de ser 
+cadastrado um topico, só que não devolvemos a entidade, as classes de dominio, logo iremos devolver um topicoDTO, 
+representando um recurso que acabou de ser criado
+
+return ResponseEntity.created(uri).body(new TopicoDTO(topico));
+
+o metodo created necessita de uma uri e um body 
+
+A semantica do codigo http 201, necessida que todas as vezes que voce devolva 201 ao cliente
+além do 201, devolva um cabeçalho http chamado location com a url deste novo recurso que foi criado
+e que no corpo da resposta devolva uma representação deste recurso criado 
+
+URI uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
+
+Essa uri que ele recebe é a classe URI do java, mas na hora que crio um objeto uri, tenho que passar 
+o caminho completo dessa uri "http://localhost:8080/topico/id do topico" .
+Para não passar este endereço completo, no método cadastrar vou chamar uma classe do spring chamada 
+UriComponentesBuilder e chamar este parametro de uriBuilder. É só declarar o UriComponentsBuilder como parâmetro 
+que o Spring vai injetar no método para você.
+
+Criamos o uri utilizando o uriBuilder e invocamos o metodo path(). E aqui está o segredo, nao passar o caminho 
+completo, só passar o caminho do recurso /topicos/ com o parametro dinamico {id}
+
+.buildAndExpand() o proximo método, recebe o topico.getId() para substituir o pametro dinamico {id} 
+E no final o .toUri() que é responsável por converter e transformar na url completa. Desta forma o uri está pronto
+
+return ResponseEntity.created(uri).body(new TopicoDTO(topico));
+
+Na sequencia do retorno, precisamos devolver um body na resposta. A ideia é criar um DTO (new TopicoDTO(topico)).
+Lembrando que quando damos um new no TopicoDTO podemos passar o topico como parametro, dentro dele tem todas 
+as informações que o DTO precisa
+
+Feito isso terminamos o return com a uri do recurso que acabou de ser criado seguido com o corpo da resposta 
