@@ -1,0 +1,48 @@
+Método handle
+
+É criada a classe ErroDeValidacaoHandler para tratar as exceções e erros que ocorrem no controler, para isso acima da classe é
+adicionada a anotação @RestControllerAdvice
+
+Nesta classe é criado um método chamado handle, que recebe a anotação @ExceptionHandler com um parametro qual tipo de 
+exceção que acontecerá no controller e será passado para este método. Neste caso é exceção de validação de formulário, que é lançada
+a execeção MethodArgumentNotValidException, logo o parametro dessa anotação será MethodArgumentNotValidException.class. 
+Agora o spring sabe que caso aconteça esta exception em qualquer hash controller ele cairá neste método. 
+
+Acima da anotação exception handler, é colocada a anotação @ResponseStatus(code = HttpStatus.BAD_REQUEST), indicando que
+mesmo que a exceção seja tratada, é para devolver um bad request e não um 200
+
+O tipo de retorno do metodo handle será uma lista do tipo ErroDeFormularioDto, nesta classe dto colocarem apenas as informações
+que queremos devolver quando houver a exception, que no caso será campo e erro.
+
+Como explicado, o método handle será responsável por devolver um erro mais "amigavel" ao cliente, mais 
+especifico e não um grande json ao cliente
+
+Continuando apos a criação da configuração de dto erro de formulário (classe ErroDeFormularioDto), o retorno do metodo handle 
+será uma lista de ErroDeFormularioDto, ou seja ele devolverá uma lista com cada um dos erros que aconteceram.
+Os erros que aconteceram são descobertos pelo (MethodArgumentNotValidException exception), pois dentro deste objeto
+tem todos os erros que ocorreram na requisição
+
+O parametro exception possui o método getBindingResult(), que terá o resultado das validações, e o método getfieldErrors() 
+que contem todos os erros de fomuário. Adicionada na variavel local fieldErrors, essa variavel terá os erros do formulário
+Só que invez de devolver esta lista, será devolvida uma lista de ErroDeFormularioDto.
+
+Para isso é criada a lista List<ErroDeFormularioDto> dto = new ArrayList<>(), o dto será o retorno do método handle, pois é justamente
+a lista de erro do formulárioDTO. Logo será necessário percorrer esta lista para cada fielderro, criar um objeto erro dto e guardar
+na lista representada pela variavel dto. 
+
+Utilizando os recursos de stream e de interação do java8 crio um fieldErrors.forEach( e -> ) passado uma lambda, indicando que 
+para cada erro, o que eu quero fazer é criar um erro de formulario dto, então ErroDeFormularioDto erro = new ErroDeFormularioDto(campo, erro)
+
+Quando é dado new no ErroDeFormularioDto(), é necessário passar uma mensagem e qual campo deu erro. O campo de erro é capturado
+pelo e.getField(). O proprio erro do FieldError já tem qual é o nome do campo. Agora a mensagem é criada a variavel mensagem 
+para a utilização da injeção de dependencias do MessageSource, essa classe messagesource te ajuda a pegar mensagens de erro 
+de acordo com o idioma do cliente que requisitou. Para capturar as mensagens de erro, é utilizado o metodo getMessage() apos a 
+injeção de dependencia, e passado com o parametro erro e, uma classe do spring chamada localeContextHolder.getLocaLe(), 
+para ele descobrir qual o "locale", qual o local atual para pegar a mensagem no idioma correto. Logo só pegar o dto, que é a lista de 
+erros e adicionar a mensagem de erro add(erro).
+
+Está é a lógica do ErroDeValidacaoHandler.java, a ideia do handler é ser um interceptador em que estou configurando o Spring
+para sempre que ocorra um erro alguma exception em algum método de quaisquer controller ele chamar automaticamente o 
+interceptador, passando a lista com todos os erros que aconteceram. Sendo assim, transformando essa lista em meu objeto
+ErroDeFormularioDto, que só possui nome do campo e mensagem de erro para simplificar
+
