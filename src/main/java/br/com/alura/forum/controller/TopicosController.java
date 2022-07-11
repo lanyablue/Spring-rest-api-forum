@@ -43,6 +43,7 @@ public class TopicosController {
     }
 
     @PostMapping    // VERBO POST
+    @Transactional
     public ResponseEntity<TopicoDTO> cadastrar(@RequestBody @Valid TopicoForm form,
                                                UriComponentsBuilder uriBuilder) { // este parametro esta no corpo da requisição
         Topico topico = form.converter(cursoRepository);  // chamo o converter passando as informações que o form nao consegue recuperar
@@ -63,10 +64,16 @@ public class TopicosController {
     public ResponseEntity<TopicoDTO> atualizar(@PathVariable Long id,
                                                @RequestBody @Valid AtualizacaoTopicoForm form) {
         Topico topico = form.atualizar(id, topicoRepository);
-
         return ResponseEntity.ok(new TopicoDTO(topico));
-
     }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> remover(@PathVariable Long id) {
+        topicoRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+    
 
 
 }
