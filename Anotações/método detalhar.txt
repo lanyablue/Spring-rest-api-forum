@@ -1,0 +1,29 @@
+Método detalhar
+
+Recebe a anotação @GetMapping("/{id}") como um id dinamico, pois o GetMapping já está sendo utilizado por outro método.
+Logo, recebe o parametro de id com a notação @PathVariable, para indicar que este parametro virá apos a / no navegador
+e não apos a ?. 
+
+Como implementação, chegará a requisição, chegará o id do topico, preciso carregar todos os dados do topico do 
+banco de dados e transforma-lo em um TopicoDTO para devolver como resposta. 
+
+Logo para carregar do banco de dados utiliza-se o topicoRepository, e como busca por id é uma ação comum, 
+utiliza-se o metodo do Spring chamado getReferenceById(id), guardar em uma variavel e chamada topico.
+
+Quero novas informações como status do topico e respostas, e quem foi o usuario, para isso criarei um DetalhesDoTopicoDto,
+que será especifico para a lógica de detalhar, e essas é uma das vantagens do dto. A classe possuirá como atributos id, titulo,
+mensagem, dataCriacao, nomeAutor e status. Lembrando que no DTO só devolvemos coisas primitivas: string, int, data e enum,
+não estou devolvendo nenhuma entidade da JPA em si.
+
+Além destes campos DTO, foi criada uma lista com as respostas do topico: private List<Resposta> respostas; . Só que 
+resposta é uma entidade e nao quero devolver o objeto resposta inteiro, logo é criada um dto para resposta.
+
+Na classe RespostaDto é devolvido o id, mensagem, data, e o nome de quem postou a resposta. Para isso utilizo o 
+procedimento de criar um construtor que já recebe todos esses parametros, similar ao topicoDto
+
+Voltado ao DetalhesDoTopicoDto a lista é de RespostaDto , isto é, private List<RespostaDto> respostas. O mesmo procedimento
+ocorro em DetalhesDoTopicoDto no construtor, exceto que em this.resposta há uma necessidade de primeiro inicializar a lista, instacia-la
+e coleta-la utilizando stream e collect: this.respostas.addAll(topico.getRespostas().stream().map(RespostaDto::new).collect(Collectors.toList()));
+
+Definido o retorno no método detalhar passando a variavel topico: return new DetalhesDoTopicoDTO(topico); está pronto  
+
