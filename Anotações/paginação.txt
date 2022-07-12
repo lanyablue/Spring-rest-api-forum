@@ -1,0 +1,21 @@
+Paginação
+
+A ideia da paginação é otimizar buscar, ordenando-a em páginas e ao invez de devolver todos os registros do banco de dados,
+devoler de pouco em pouco.
+
+Logo o metodo listar recebe como parametro int pagina e int quantidade, sendo int a pagina na qual o cliente deseja consultar
+e int a quantidade de retornos dessa pagina. É adicionada junto a estes parametros a notação @RequestParam, para avisar ao spring
+que é um parametro de request considerando-o obrigatorio, caso nao seja passado no endereço este parametro, o spring 
+jogará um erro 400 para o cliente informando que nao foi enviado um parametro obrigatorio.No caso, o nome do curso será opcional,
+logo a anotação que possui um atributo chamado required recebe o valor false
+
+Para fazer a paginação é criada uma variavel do tipo Pageable, que é uma classe do spring data para paginação, essa variavel
+é chamada de paginação, que necessita de uma outra classe chamada pageRequest. Nela, tem um método estatico chamado of
+em que é passado a pagina e a quantidade, com isso ele cria um objeto do tipo pageable:
+
+Pageable paginacao = PageResquest.of(pagina, quantidade);
+
+É possivel passar como parametro um objeto do tipo pageable dentro do metodo findAll() do spring, e assim é feita a paginação
+Porem ao passar este parametro, é necessario modificar todos os retornos e todas as listas do metodo principal para o tipo Page, 
+pois agora está mais sendo retornada uma List, e sim um Page
+
