@@ -19,3 +19,11 @@ Pageable paginacao = PageResquest.of(pagina, quantidade);
 Porem ao passar este parametro, é necessario modificar todos os retornos e todas as listas do metodo principal para o tipo Page, 
 pois agora está mais sendo retornada uma List, e sim um Page
 
+Porem graças ao spring podemos substituir toda a implementação de Pageable passando-o como parametro para o metodo
+principal, isso faz com que seja necessario na classe ForumApplication a anotação @EnableSpringDataWebSupport ,
+que habilita para o spring o suporte para informações paginação e ordenação
+
+Entretando no postman ao testar o codigo a sintax ficará em ingles por padrão do spring:
+
+http://localhost:8080/topicos?page=0&size=10&sort=id,desc
+
