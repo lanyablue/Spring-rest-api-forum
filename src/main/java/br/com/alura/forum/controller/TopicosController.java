@@ -4,7 +4,6 @@ import br.com.alura.forum.controller.DTO.DetalhesDoTopicoDTO;
 import br.com.alura.forum.controller.DTO.TopicoDTO;
 import br.com.alura.forum.controller.form.AtualizacaoTopicoForm;
 import br.com.alura.forum.controller.form.TopicoForm;
-import br.com.alura.forum.modelo.Curso;
 import br.com.alura.forum.modelo.Topico;
 import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.repository.TopicoRepository;
@@ -13,16 +12,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 
