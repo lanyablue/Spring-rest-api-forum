@@ -1,0 +1,21 @@
+Cache
+
+A ideia é que, se eu utilizar o cache, consigo dizer para o Spring guardar o retorno de um método em cache. 
+Na primeira vez que eu chamar aquele método, ele vai executar linha por linha do método e vai devolver o resultado. 
+Porém, nas próximas chamadas, ele já devolve direto o que está em memória. Com isso, fica muito mais rápido o retorno 
+para o cliente que fez a chamada para a API.
+
+O primeiro passo é adicionar a dependencia de cache ao pom.xml, e outra dependencia que deveria ser colocada é qual 
+provedor de cache estou utilizando na aplicação, com aplicação rodado em produção real, o ideal é utilizar algum 
+proedor de cache, mas para fins de desenvolvimento nao será utilizado algum, pois caso nao declarado o spring usa um padrão,
+que é onde ele guarda o cache em memória usando um rest map. 
+
+Proximo passo foi ativar o uso de cache com a anotação @EnableCaching na aplicação principal. E para utilizar o cache 
+em alguma classe do tipo controller, service ou repository é necessario acima do método avisar ao spring que aquele metodo
+usará cache com isso a anotação @Cacheable()
+
+Esta anotação precisa de um identificador, pois na aplicação terá varios metodos utilizando esta anotação e o spring precisa 
+saber como diferenciar um do outro, logo a anotação ficou @Cacheable(value = "listaDeTopicos"). Esta string vai funcionar 
+como um id desse cache
+
+
