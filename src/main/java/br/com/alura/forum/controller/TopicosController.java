@@ -25,7 +25,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/topicos")
+@RequestMapping("/topicos")   // rota
 public class TopicosController {
 
     @Autowired     // injeção de dependencias
