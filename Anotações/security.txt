@@ -1,0 +1,33 @@
+Spring boot security
+
+O Spring Boot possui um módulo focado somente nessa parte de segurança, que cuida da parte de autenticação e autorização
+Para isso no pom.xml é adicionada a dependencia spring-boot-starter-security
+
+As configurações de segurança geralmente são feitas no application.properties. Porem esta parte é um pouco complicada,
+pois existe diversas configurações, muita coisa dinamica, portanto todas as configurações serão feitas via classe java
+
+Criado um novo pacote de security com a classe SecurityConfigurations, começamos com as anotações
+@EnableWebSecurity anotação resposavel por habilitar a parte do Spring Security 
+@Configuration por ser uma classe de configurações, fará o spring carregar e ler todas as configurações dentro da classe
+
+Além disso, a classe herda uma classe chamada WebSecurityConfigurerAdapter, essa classe tem métodos de configuração, e agora
+a aplicação está completamente trancada, ou seja, por padrão o spring bloqueia todo o acesso a nossa api, tudo está restrito
+até que as configurações libere o que precisa ser liberado.
+
+
+Para liberar acessos começaremos a sobrescrever tres metodos configure, sendo:
+configure(AuthenticationManagerBuilder auth) - configurações de autenticação
+configure(HttpSecurity http) - configurações de autorização
+configure(WebSecurity web) - configurações de recursos estáticos (js, css, imagens etc)
+
+Começando pelo HttpSecurity, a configuração é feita da seguinte forma pelo parametro:
+ http.authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/topicos").permitAll()
+                .antMatchers(HttpMethod.GET, "/topicos/*").permitAll();
+				
+Acima estou autorizando alguns requests do tipo GET, no caso será os dois métodos do controller listar e detalhar por id,
+pelo método antiMatchers, foi passado como parametro o tipo de requisição e sua url correspondente.
+
+
+				
+				
