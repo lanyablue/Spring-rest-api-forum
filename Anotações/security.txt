@@ -28,6 +28,76 @@ Começando pelo HttpSecurity, a configuração é feita da seguinte forma pelo p
 Acima estou autorizando alguns requests do tipo GET, no caso será os dois métodos do controller listar e detalhar por id,
 pelo método antiMatchers, foi passado como parametro o tipo de requisição e sua url correspondente.
 
+Em seguida entramos com  .anyRequest().authenticated() para garantir que todas as outras requisições estejam 
+autenticadas, ou seja, so conseguirá acessar e disparar requisições se o cliente estiver autenticado
+
+Logica de autenticação:
+
+Para começar a ideia de autenticação no projeto, teremos que ter classe que represente o usuario e a senha dele, e 
+seu perfil de acesso. Nesta entidade possuimos id, nome, email, e senha, sendo email e senha as informações que 
+utilizará para se autenticar no sistema, para isso a classe implementará uma interface chamada UserDetails, que é 
+responder por dizer que esta é a classe que contem detalhes de um usuario
+
+Logo com essa interface vem a implementação de métodos obrigatorios:
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return this.perfis;
+	}
+
+	@Override
+	public String getPassword() {
+		return this.senha;
+	}
+
+	@Override
+	public String getUsername() {
+		return this.email;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+Para saber a senha do seu usuário, o spring chamará o método getPassword(), que então devolverá senha (return this.senha), e 
+para saber seu username getUsername() que o retorno será o email (return this.email)
+
+Os metodos que devolvem booleanos são métodos de controle da conta do usuario, caso a conta esteja bloqueada, se possui 
+data de expiração ou coisas do genero, no caso do exemplo não foi utilizado nenhum caso.
+
+O método public Collection<? extends GrantedAuthority> getAuthorities() precisa devolver uma collection de GrantedAuthority, 
+pois para o spring security, além de ter uma classe de usuario, precisa-se de uma classe que representa o perfil do usuario,
+que é o perfil relacionado com as permissões de acesso dele, para devolver qual atributo contem a coleção com os perfis 
+desse usuario
+
+para isso é criado mais um atributo na classe usuario chamado perfis, do tipo List<Perfil>, sendo inicializada com new ArrayList<>()
+
+Logo é preciso criar uma nova tabela Perfil no pacote modelo, está classe é uma entidade e por isso recebe @Entity, e alem do
+id ter um atributo que é uma string com o nome do perfil, com qual é o perfil de acesso, se é aluno, moderador, admin, o nome do
+perfil que esta acessando, com seus getters e setters de id e atributo nome
+A classe que representa o perfil precisa implementar a interface GrantedAuthority para dizer ao spring que esta é a classe que 
+representa o perfil de acesso. Essa interface vem com o metodo que é o getAuthority para devolvermos qual o atributo 
+que tem o nome do authority, o nome do perfil logo return nome;
+
+
+
+
 
 				
 				
