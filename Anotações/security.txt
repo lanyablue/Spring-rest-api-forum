@@ -94,6 +94,52 @@ perfil que esta acessando, com seus getters e setters de id e atributo nome
 A classe que representa o perfil precisa implementar a interface GrantedAuthority para dizer ao spring que esta é a classe que 
 representa o perfil de acesso. Essa interface vem com o metodo que é o getAuthority para devolvermos qual o atributo 
 que tem o nome do authority, o nome do perfil logo return nome;
+Como a classe Perfil é uma entidade é necessario dizer qual o relacionamento, a cardinalidade entre usuario e perfil.
+Como um usuario pode ter varios perfis, e um perfil ta atrelado a mais de um usuario, a relação será manytomany
+
+Agora na classe de configuração, depois do metodo .authenticated() vem os métodos .and().formLogin(). Aqui estou 
+dizendo para o spring gerar um formulario de autenticação, o spring já possui um formulario de autenticação e um 
+controller que recebe as requisições desse formulario.
+
+Testando essas configurações no browser, o spring cria uma pagina de login, um form de login ao tentar acessar
+o localhost:8080, agora é configurar a logica de autenticação
+
+A logica de autenticação começa no método configure que recebe como parametro auth, esse parametro possui
+varios métodos, incluindo o usarDetailsService(), que é para dizer ao spring qual é a classe, a service que possui 
+a logica de autenticação, para isso é criada a classe AutenticaçãoService:
+auth.userDetailsService(autenticacaoService)
+
+Essa classe é gerenciada pelo spring e por isso recebe a anotação @Service, e para dizermos ao spring que essa 
+service é a service que possui a logica de autenticação, ela implementa a interface UserDetailsService,
+essa interface possui um metodo a ser implementado que é o loadUserByUsername(String username).
+
+Quando alguem acessar o formulario de login, digitar o email e clicar no botão login, o spring saberá 
+que essa é a classe de autenticação e chamará este método, que recebe como parametro o email
+que foi digitado na tela de login. Para o spring so basta o email e fazer a consulta no banco de dados só 
+por isso, a senha ele faz em memoria. No geral, em uma aplicação já fazemos a consulta no banco filtrando 
+pelo usuário e pela senha. No spring security buscamos pelo email e ele faz a checagem da senha em memoria.
+
+É criada também um UsuarioRepository para fazer a busca no banco pelos dados do usuario, esse usuario repository
+é criado o metodo findByEmail(String email).
+Voltando na service chamamos o repository atraves do @autowired (injeção de dependencia).
+Optional<Usuario> usuario = usuarioRepository.findByEmail(username);
+Ele precisa ter o retorno optional pois caso o usuario passe um email que nao existe, ele jogará uma exceção.
+ if (usuario.isPresent()) {
+            return usuario.get();
+}
+Esse if serve para pegar o usuario caso ele seja encontrado no banco de dados.
+Caso ele não encontre, devolvemos uma exceção ao cliente throw new UsernameNotFoundException("Dados invalidos");
+
+Voltando ao securityConfiguration, é injetada a service que faz a autenticação pela notação @autowired
+
+.passwordEncoder(new BCryptPasswordEncoder()) metodo para fazer um algoritmo de hash da senha 
+
+
+
+
+
+
+
 
 
 
