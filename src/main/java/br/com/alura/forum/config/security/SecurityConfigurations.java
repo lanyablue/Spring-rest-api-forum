@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity // habilitando a parte do security na aplicação
 @Configuration    // habilita a leitura das configurações de bin dentro da classe
@@ -33,13 +34,14 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 
     @Override // Configurações de autorização
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http.authorizeRequests() // autorização
                 .antMatchers(HttpMethod.GET, "/topicos").permitAll()
                 .antMatchers(HttpMethod.GET, "/topicos/*").permitAll()
                 .antMatchers(HttpMethod.POST, "/auth").permitAll()   // url de login
                 .anyRequest().authenticated()    //forço autenticação
                 .and().csrf().disable()     // desabilita Cross-site Request Forgery
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // nao crie sessions ao autenticar
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // nao crie sessions ao autenticar
+                .and().addFilterBefore(new AutenticacaoViaTokenFilter(), UsernamePasswordAuthenticationFilter.class);  // antes de autenticar rode o meu filtro
     }
 
     @Override // Configurações de recursos estaticos(js, css, imagens, etc)
