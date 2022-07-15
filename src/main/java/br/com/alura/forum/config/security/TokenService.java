@@ -33,4 +33,16 @@ public class TokenService {
     }
 
 
+    public boolean isTokenValido(String token) {
+        try {
+            Jwts.parser() // método para fazer a logica do parse de um token, descriptografar e verificar
+                    .setSigningKey(this.secret) // chave para criptografar e descriptografar
+                    .parseClaimsJws(token); // objeto para recuperar o token e as informações setadas
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
+
+    }
 }
