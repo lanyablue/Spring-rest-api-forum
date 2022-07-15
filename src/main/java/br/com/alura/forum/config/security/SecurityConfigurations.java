@@ -1,5 +1,6 @@
 package br.com.alura.forum.config.security;
 
+import br.com.alura.forum.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,9 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @Override
     @Bean  // esse metodo devolve o authenticationmanager e com isso conseguimos injetar no controller
     protected AuthenticationManager authenticationManager() throws Exception {
@@ -44,7 +48,8 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()    //forço autenticação
                 .and().csrf().disable()     // desabilita Cross-site Request Forgery
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // nao crie sessions ao autenticar
-                .and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService), UsernamePasswordAuthenticationFilter.class);  // antes de autenticar rode o meu filtro
+                .and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService, usuarioRepository),
+                        UsernamePasswordAuthenticationFilter.class);  // antes de autenticar rode o meu filtro
     }
 
     @Override // Configurações de recursos estaticos(js, css, imagens, etc)
