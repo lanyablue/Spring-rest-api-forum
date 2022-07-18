@@ -46,6 +46,7 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/topicos/*").permitAll()
                 .antMatchers(HttpMethod.POST, "/auth").permitAll()   // url de login
                 .antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/topicos/*").hasRole("MODERADOR") //só modedorador pode excluir
                 .anyRequest().authenticated()    //forço autenticação
                 .and().csrf().disable()     // desabilita Cross-site Request Forgery
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // nao crie sessions ao autenticar
