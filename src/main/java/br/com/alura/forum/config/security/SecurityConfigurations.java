@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @EnableWebSecurity // habilitando a parte do security na aplicação
 @Configuration    // habilita a leitura das configurações de bin dentro da classe
-@Profile("prod")  //ambiente de produção
+@Profile(value = {"prod","test"})  //ambiente de produção
 public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 
     @Autowired
